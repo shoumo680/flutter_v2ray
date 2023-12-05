@@ -1,6 +1,10 @@
 package com.github.blueboytm.flutter_v2ray.v2ray.services;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.net.LocalSocket;
 import android.net.LocalSocketAddress;
@@ -9,16 +13,18 @@ import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
+import androidx.core.app.NotificationCompat;
 
 import com.github.blueboytm.flutter_v2ray.v2ray.core.V2rayCoreManager;
 import com.github.blueboytm.flutter_v2ray.v2ray.interfaces.V2rayServicesListener;
 import com.github.blueboytm.flutter_v2ray.v2ray.utils.AppConfigs;
 import com.github.blueboytm.flutter_v2ray.v2ray.utils.V2rayConfig;
+
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class V2rayVPNService extends VpnService implements V2rayServicesListener {
     private ParcelFileDescriptor mInterface;
@@ -30,6 +36,15 @@ public class V2rayVPNService extends VpnService implements V2rayServicesListener
     public void onCreate() {
         super.onCreate();
         V2rayCoreManager.getInstance().setUpListener(this);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) {
+            NotificationChannel channel = new NotificationChannel("VPN", "VPN", NotificationManager.IMPORTANCE_HIGH);
+            ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "VPN");
+            builder.setContentTitle("VPN");
+            builder.setContentText("VPN正在运行");
+            Notification notification = builder.build();
+            startForeground(1, notification);
+        }
     }
 
     @Override

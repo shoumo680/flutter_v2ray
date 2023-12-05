@@ -30,6 +30,24 @@ abstract class V2RayURL {
     "allocate": null
   };
 
+  Map<String, dynamic> inbound2 = {
+    "tag": "in_proxy",
+    "port": 10809,
+    "protocol": "socks",
+    "listen": "127.0.0.1",
+    "settings": {
+      "auth": "noauth",
+      "udp": true,
+      "userLevel": 8,
+      "address": null,
+      "port": null,
+      "network": null
+    },
+    "sniffing": {"enabled": false, "destOverride": null, "metadataOnly": null},
+    "streamSettings": null,
+    "allocate": null
+  };
+
   Map<String, dynamic> log = {
     "access": "",
     "error": "",
