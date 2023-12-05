@@ -37,6 +37,7 @@ abstract class FlutterV2rayPlatform extends PlatformInterface {
   Future<void> startV2Ray({
     required String remark,
     required String config,
+    required int inboundPort,
     List<String>? blockedApps,
     bool proxyOnly = false,
   }) {
