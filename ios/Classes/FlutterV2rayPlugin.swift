@@ -35,7 +35,7 @@ public class FlutterV2rayPlugin: NSObject, FlutterPlugin {
                     }
                     try await Task.sleep(nanoseconds: 100_000_000)//0.1s
                     
-                    try await controller?.startVPN(inboundPort: arg["inboundPort"] as! Int,config: arg["config"] as! String)
+                    try await controller?.startVPN(httpPort: arg["httpPort"] as! Int,socksPort: arg["socksPort"] as! Int,config: arg["config"] as! String)
                 } catch {
                     result(false)
                     return

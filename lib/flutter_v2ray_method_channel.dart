@@ -36,14 +36,16 @@ class MethodChannelFlutterV2ray extends FlutterV2rayPlatform {
   Future<void> startV2Ray({
     required String remark,
     required String config,
-    required int inboundPort,
+    required int httpPort,
+    required int socksPort,
     List<String>? blockedApps,
     bool proxyOnly = false,
   }) async {
     await methodChannel.invokeMethod('startV2Ray', {
       "remark": remark,
       "config": config,
-      "inboundPort": inboundPort,
+      "httpPort": httpPort,
+      "socksPort": socksPort,
       "blocked_apps": blockedApps,
       "proxy_only": proxyOnly,
     });

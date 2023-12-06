@@ -51,7 +51,8 @@ class _HomePageState extends State<HomePage> {
       flutterV2ray.startV2Ray(
         remark: remark,
         config: config.text,
-        inboundPort: 0,
+        httpPort: 0,
+        socksPort: 0,
         proxyOnly: proxyOnly,
       );
     } else {

@@ -37,7 +37,7 @@ public final class VPNController: ObservableObject {
         self.providerManager === manager
     }
     
-    public func startVPN(inboundPort:Int,config:String) async throws {
+    public func startVPN(httpPort:Int,socksPort:Int,config:String) async throws {
         switch self.providerManager.connection.status {
         case .disconnecting, .disconnected:
             break
@@ -51,7 +51,7 @@ public final class VPNController: ObservableObject {
             try await self.providerManager.saveToPreferences()
         }
         do {
-            let opstions = ["inboundPort" : inboundPort as NSObject,"config" : config as NSObject]
+            let opstions = ["httpPort" : httpPort as NSObject,"socksPort" : socksPort as NSObject,"config" : config as NSObject]
             try self.providerManager.connection.startVPNTunnel(options: opstions)
         } catch {
             print("error: \(error)")

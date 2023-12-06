@@ -57,7 +57,8 @@ class FlutterV2ray {
   Future<void> startV2Ray({
     required String remark,
     required String config,
-    required int inboundPort,
+    required int httpPort,
+    required int socksPort,
     List<String>? blockedApps,
     bool proxyOnly = false,
   }) async {
@@ -72,7 +73,8 @@ class FlutterV2ray {
     await FlutterV2rayPlatform.instance.startV2Ray(
       remark: remark,
       config: config,
-      inboundPort: inboundPort,
+      httpPort: httpPort,
+      socksPort: socksPort,
       blockedApps: blockedApps,
       proxyOnly: proxyOnly,
     );
