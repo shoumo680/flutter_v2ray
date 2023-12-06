@@ -31,9 +31,9 @@ abstract class V2RayURL {
   };
 
   Map<String, dynamic> inbound2 = {
-    "tag": "in_proxy",
+    "tag": "http",
     "port": 10809,
-    "protocol": "socks",
+    "protocol": "http",
     "listen": "127.0.0.1",
     "settings": {
       "auth": "noauth",
@@ -116,7 +116,7 @@ abstract class V2RayURL {
 
   Map<String, dynamic> get fullConfiguration => {
         "log": log,
-        "inbounds": [inbound],
+        "inbounds": [inbound,inbound2],
         "outbounds": [outbound1, outbound2, outbound3],
         "dns": dns,
         "routing": routing,
