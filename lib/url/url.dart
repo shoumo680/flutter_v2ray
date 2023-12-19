@@ -30,24 +30,6 @@ abstract class V2RayURL {
     "allocate": null
   };
 
-  Map<String, dynamic> inbound2 = {
-    "tag": "http",
-    "port": 10809,
-    "protocol": "http",
-    "listen": "127.0.0.1",
-    "settings": {
-      "auth": "noauth",
-      "udp": true,
-      "userLevel": 8,
-      "address": null,
-      "port": null,
-      "network": null
-    },
-    "sniffing": {"enabled": false, "destOverride": null, "metadataOnly": null},
-    "streamSettings": null,
-    "allocate": null
-  };
-
   Map<String, dynamic> log = {
     "access": "",
     "error": "",
@@ -116,7 +98,7 @@ abstract class V2RayURL {
 
   Map<String, dynamic> get fullConfiguration => {
         "log": log,
-        "inbounds": [inbound,inbound2],
+        "inbounds": [inbound],
         "outbounds": [outbound1, outbound2, outbound3],
         "dns": dns,
         "routing": routing,
