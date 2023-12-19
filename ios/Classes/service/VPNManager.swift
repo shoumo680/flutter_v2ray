@@ -74,7 +74,7 @@ public final class VPNManager: ObservableObject {
         let manager = (try? await loadCurrentTunnelProviderManager()) ?? NETunnelProviderManager()
         let config = NETunnelProviderProtocol()
         config.providerBundleIdentifier = self.providerBundleIdentifier
-        config.serverAddress = "Clash"
+        config.serverAddress = "Proxy"
         config.disconnectOnSleep = false
         if #available(iOS 14.2, *) {
             config.providerConfiguration = [:]
