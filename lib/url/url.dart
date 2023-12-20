@@ -14,7 +14,7 @@ abstract class V2RayURL {
 
   Map<String, dynamic> inbound = {
     "tag": "in_proxy",
-    "port": 10808,
+    "port": 1080,
     "protocol": "socks",
     "listen": "127.0.0.1",
     "settings": {
