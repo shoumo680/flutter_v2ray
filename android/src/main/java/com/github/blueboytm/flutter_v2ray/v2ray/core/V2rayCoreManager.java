@@ -296,7 +296,7 @@ public final class V2rayCoreManager {
                 new NotificationCompat.Builder(v2rayServicesListener.getService(), notificationChannelID);
         mBuilder.setSmallIcon(v2rayConfig.APPLICATION_ICON)
                 .setContentTitle(v2rayConfig.REMARK)
-                .setContentText("tap to open application")
+                .setContentText("proxy")
                 .setContentIntent(notificationContentPendingIntent);
         v2rayServicesListener.getService().startForeground(1, mBuilder.build());
     }
