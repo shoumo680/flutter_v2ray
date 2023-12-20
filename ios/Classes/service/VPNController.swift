@@ -38,14 +38,14 @@ public final class VPNController: ObservableObject {
     }
     
     public func startVPN(socksPort:Int,config:String) async throws {
-        switch self.providerManager.connection.status {
-        case .disconnecting, .disconnected:
-            break
-        case .connecting, .connected, .reasserting, .invalid:
-            return
-        @unknown default:
-            break
-        }
+//        switch self.providerManager.connection.status {
+//        case .disconnecting, .disconnected:
+//            break
+//        case .connecting, .connected, .reasserting, .invalid:
+//            return
+//        @unknown default:
+//            break
+//        }
         if !self.providerManager.isEnabled {
             self.providerManager.isEnabled = true
             try await self.providerManager.saveToPreferences()
