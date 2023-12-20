@@ -38,6 +38,7 @@ class MethodChannelFlutterV2ray extends FlutterV2rayPlatform {
     required String config,
     required int socksPort,
     List<String>? blockedApps,
+    List<String>? bypassSubnets,
     bool proxyOnly = false,
   }) async {
     await methodChannel.invokeMethod('startV2Ray', {
@@ -45,6 +46,7 @@ class MethodChannelFlutterV2ray extends FlutterV2rayPlatform {
       "config": config,
       "socksPort": socksPort,
       "blocked_apps": blockedApps,
+      "bypass_subnets": bypassSubnets,
       "proxy_only": proxyOnly,
     });
   }
@@ -62,7 +64,17 @@ class MethodChannelFlutterV2ray extends FlutterV2rayPlatform {
   }
 
   @override
+  Future<int> getConnectedServerDelay() async {
+    return await methodChannel.invokeMethod('getConnectedServerDelay');
+  }
+
+  @override
   Future<bool> requestPermission() async {
     return (await methodChannel.invokeMethod('requestPermission')) ?? false;
+  }
+
+  @override
+  Future<String> getCoreVersion() async {
+    return await methodChannel.invokeMethod('getCoreVersion');
   }
 }

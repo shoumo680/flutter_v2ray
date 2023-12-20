@@ -43,6 +43,9 @@ class _HomePageState extends State<HomePage> {
   final config = TextEditingController();
   bool proxyOnly = false;
   var v2rayStatus = ValueNotifier<V2RayStatus>(V2RayStatus());
+  final bypassSubnetController = TextEditingController();
+  List<String> bypassSubnets = [];
+  String? coreVersion;
 
   String remark = "Default Remark";
 
@@ -53,6 +56,7 @@ class _HomePageState extends State<HomePage> {
         config: config.text,
         socksPort: 0,
         proxyOnly: proxyOnly,
+        bypassSubnets: bypassSubnets,
       );
     } else {
       if (context.mounted) {
@@ -97,10 +101,59 @@ class _HomePageState extends State<HomePage> {
   }
 
   void delay() async {
+    late int delay;
+    if (v2rayStatus.value.state == 'CONNECTED') {
+      delay = await flutterV2ray.getConnectedServerDelay();
+    } else {
+      delay = await flutterV2ray.getServerDelay(config: config.text);
+    }
+    if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          '${(await flutterV2ray.getServerDelay(config: config.text))}ms',
+          '${delay}ms',
+        ),
+      ),
+    );
+  }
+
+  void bypassSubnet() {
+    bypassSubnetController.text = bypassSubnets.join("\n");
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Subnets:',
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 5),
+              TextFormField(
+                controller: bypassSubnetController,
+                maxLines: 5,
+                minLines: 5,
+              ),
+              const SizedBox(height: 5),
+              ElevatedButton(
+                onPressed: () {
+                  bypassSubnets =
+                      bypassSubnetController.text.trim().split('\n');
+                  if (bypassSubnets.first.isEmpty) {
+                    bypassSubnets = [];
+                  }
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Submit'),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -109,7 +162,17 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    flutterV2ray.initializeV2Ray();
+    flutterV2ray.initializeV2Ray().then((value) async {
+      coreVersion = await flutterV2ray.getCoreVersion();
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    config.dispose();
+    bypassSubnetController.dispose();
+    super.dispose();
   }
 
   @override
@@ -166,7 +229,9 @@ class _HomePageState extends State<HomePage> {
                         Text(value.download),
                         const Text('↓'),
                       ],
-                    )
+                    ),
+                    const SizedBox(height: 10),
+                    Text('Core Version: $coreVersion'),
                   ],
                 );
               },
@@ -199,6 +264,10 @@ class _HomePageState extends State<HomePage> {
                   ElevatedButton(
                     onPressed: delay,
                     child: const Text('Server Delay'),
+                  ),
+                  ElevatedButton(
+                    onPressed: bypassSubnet,
+                    child: const Text('Bypass Subnet'),
                   ),
                 ],
               ),

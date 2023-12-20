@@ -49,6 +49,16 @@ class FlutterV2ray {
   ///
   ///   specifically for Android.
   ///
+  /// bypassSubnets:
+  ///
+  ///     [Default = 0.0.0.0/0]
+  ///
+  ///     Add at least one route if you want the system to send traffic through the VPN interface.
+  ///
+  ///     Routes filter by destination addresses.
+  ///
+  ///     To accept all traffic, set an open route such as 0.0.0.0/0 or ::/0.
+  ///
   /// proxyOnly:
   ///
   ///   If it is true, only the v2ray proxy will be executed,
@@ -59,6 +69,7 @@ class FlutterV2ray {
     required String config,
     required int socksPort,
     List<String>? blockedApps,
+    List<String>? bypassSubnets,
     bool proxyOnly = false,
   }) async {
     try {
@@ -75,6 +86,7 @@ class FlutterV2ray {
       socksPort: socksPort,
       blockedApps: blockedApps,
       proxyOnly: proxyOnly,
+      bypassSubnets: bypassSubnets,
     );
   }
 
@@ -93,6 +105,16 @@ class FlutterV2ray {
       throw ArgumentError('The provided string is not valid JSON');
     }
     return await FlutterV2rayPlatform.instance.getServerDelay(config: config);
+  }
+
+  /// This method returns the connected server delay.
+  Future<int> getConnectedServerDelay() async {
+    return await FlutterV2rayPlatform.instance.getConnectedServerDelay();
+  }
+
+  // This method returns the V2Ray Core version.
+  Future<String> getCoreVersion() async {
+    return await FlutterV2rayPlatform.instance.getCoreVersion();
   }
 
   /// parse V2RayURL object from V2Ray share link
