@@ -4,7 +4,10 @@ import UIKit
 public class FlutterV2rayPlugin: NSObject, FlutterPlugin {
     
     private let channel: FlutterMethodChannel
-    private let vpnManager = VPNManager.shared
+        private let vpnManager = VPNManager.shared
+    
+//    private let packetTunnelManager  = PacketTunnelManager.shared
+    
     
     let suiteName: String = {
         let identifier = Bundle.main.infoDictionary?["CFBundleIdentifier"] as! String
@@ -27,15 +30,10 @@ public class FlutterV2rayPlugin: NSObject, FlutterPlugin {
             Task.init {
                 do {
                     let arg = call.arguments as! [String : NSObject]
-                    try await vpnManager.installVPNConfiguration()
-                    let controller = await vpnManager.loadController()
-                    if(controller == nil) {
-                        result(false)
-                        return
-                    }
-                    try await Task.sleep(nanoseconds: 100_000_000)//0.1s
+                    try await  vpnManager.saveToPreferences()
                     
-                    try await controller?.startVPN(socksPort: arg["socksPort"] as! Int,config: arg["config"] as! String)
+                    try await Task.sleep(nanoseconds: 100_000_000)//0.1s
+                    try await vpnManager.start(socksPort: arg["socksPort"] as! Int,config: arg["config"] as! String)
                 } catch {
                     result(false)
                     return
@@ -44,8 +42,10 @@ public class FlutterV2rayPlugin: NSObject, FlutterPlugin {
             }
             
         case "stopV2Ray":
-            vpnManager.controller?.stopVPN()
-            result(nil)
+            Task.init {
+                await  vpnManager.stop()
+                result(nil)
+            }
             
         case "initializeV2Ray":
             result(nil)
