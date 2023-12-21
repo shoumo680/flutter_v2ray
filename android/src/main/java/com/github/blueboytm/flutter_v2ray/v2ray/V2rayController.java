@@ -23,7 +23,7 @@ public class V2rayController {
 
     public static void init(final Context context, final int app_icon, final String app_name) {
         Utilities.copyAssets(context);
-        AppConfigs.APPLICATION_ICON = app_icon
+        AppConfigs.APPLICATION_ICON = app_icon;
         AppConfigs.APPLICATION_NAME = app_name;
         context.registerReceiver(new BroadcastReceiver() {
             @Override
