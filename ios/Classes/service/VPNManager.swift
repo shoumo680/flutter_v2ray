@@ -5,7 +5,7 @@ import Combine
 final class VPNManager: ObservableObject {
     
     public static let shared = VPNManager()
-
+    
     private let providerBundleIdentifier: String = {
         let identifier = Bundle.main.infoDictionary?["CFBundleIdentifier"] as! String
         return "\(identifier).PacketTunnel"
@@ -29,18 +29,18 @@ final class VPNManager: ObservableObject {
         isProcessing = true
         Task(priority: .userInitiated) {
             await self.reload()
-//            do {
-//                try await Task.sleep(for: .milliseconds(250))
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                    // 延时后要执行的代码
-                    self.isProcessing = false
-                }
-//            } catch {
-//                debugPrint(error.localizedDescription)
-//            }
-//            await MainActor.run {
-//                isProcessing = false
-//            }
+            //            do {
+            //                try await Task.sleep(for: .milliseconds(250))
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                // 延时后要执行的代码
+                self.isProcessing = false
+            }
+            //            } catch {
+            //                debugPrint(error.localizedDescription)
+            //            }
+            //            await MainActor.run {
+            //                isProcessing = false
+            //            }
         }
     }
     
@@ -64,28 +64,28 @@ final class VPNManager: ObservableObject {
     }
     
     func saveToPreferences() async throws {
-        let manager = NETunnelProviderManager()
-//        manager.localizedDescription = "Xray"
-        manager.protocolConfiguration = {
+        //        let manager = NETunnelProviderManager()
+        //        manager.localizedDescription = "Xray"
+        manager?.protocolConfiguration = {
             let configuration = NETunnelProviderProtocol()
             configuration.providerBundleIdentifier = self.providerBundleIdentifier
             configuration.serverAddress = "Proxy"
             configuration.disconnectOnSleep = false
-
+            
             configuration.providerConfiguration = [:]
             if #available(iOS 14.2, *) {
                 configuration.providerConfiguration = [:]
                 configuration.excludeLocalNetworks = true
-    //            config.includeAllNetworks = true
+                //            config.includeAllNetworks = true
             }
             return configuration
         }()
-        manager.isEnabled = true
-        manager.isOnDemandEnabled = true
-
-        try await manager.saveToPreferences()
+        manager?.isEnabled = true
+        manager?.isOnDemandEnabled = true
+        
+        try await manager?.saveToPreferences()
     }
-
+    
     func removeFromPreferences() async throws {
         guard let manager = manager else {
             return
@@ -127,17 +127,17 @@ final class VPNManager: ObservableObject {
             }
         }
     }
-
+    
     private func loadTunnelProviderManager() async -> NETunnelProviderManager? {
         do {
             let managers = try await NETunnelProviderManager.loadAllFromPreferences()
-            guard let reval = managers.first(where: {
+            guard var reval = managers.first(where: {
                 guard let configuration = $0.protocolConfiguration as? NETunnelProviderProtocol else {
                     return false
                 }
                 return configuration.providerBundleIdentifier == self.providerBundleIdentifier
             }) else {
-                return nil
+                return NETunnelProviderManager()
             }
             try await reval.loadFromPreferences()
             return reval
