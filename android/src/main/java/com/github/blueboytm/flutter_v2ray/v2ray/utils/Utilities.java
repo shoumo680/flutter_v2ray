@@ -50,7 +50,7 @@ public class Utilities {
                 }
             }
         } catch (Exception e) {
-            Log.e("Utilities", "copyAssets failed=>", e);
+            Log.d("Utilities", "copyAssets failed=>", e);
         }
     }
 
@@ -156,7 +156,7 @@ public class Utilities {
                 }
             }
         } catch (Exception e) {
-            Log.e(Utilities.class.getName(), "parseV2rayJsonFile failed => ", e);
+            Log.d(Utilities.class.getName(), "parseV2rayJsonFile failed => ", e);
             //ignore
             return null;
         }

@@ -35,7 +35,7 @@ public class V2rayProxyOnlyService extends Service implements V2rayServicesListe
             }
             assert v2rayConfig != null;
             if (V2rayCoreManager.getInstance().startCore(v2rayConfig)) {
-                Log.e(V2rayProxyOnlyService.class.getSimpleName(), "onStartCommand success => v2ray core started.");
+                Log.d(V2rayProxyOnlyService.class.getSimpleName(), "onStartCommand success => v2ray core started.");
             } else {
                 this.onDestroy();
             }

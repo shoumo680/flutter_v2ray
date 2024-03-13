@@ -45,7 +45,7 @@ public class V2rayVPNService extends VpnService implements V2rayServicesListener
                 V2rayCoreManager.getInstance().stopCore();
             }
             if (V2rayCoreManager.getInstance().startCore(v2rayConfig)) {
-                Log.e(V2rayProxyOnlyService.class.getSimpleName(), "onStartCommand success => v2ray core started.");
+                Log.d(V2rayProxyOnlyService.class.getSimpleName(), "onStartCommand success => v2ray core started.");
             } else {
                 this.onDestroy();
             }
@@ -74,7 +74,7 @@ public class V2rayVPNService extends VpnService implements V2rayServicesListener
             stopSelf();
         } catch (Exception e) {
             //ignore
-            Log.e("CANT_STOP", "SELF");
+            Log.d("CANT_STOP", "SELF");
         }
         try {
             mInterface.close();
@@ -159,7 +159,7 @@ public class V2rayVPNService extends VpnService implements V2rayServicesListener
             }, "Tun2socks_Thread").start();
             sendFileDescriptor();
         } catch (Exception e) {
-            Log.e("VPN_SERVICE", "FAILED=>", e);
+            Log.d("VPN_SERVICE", "FAILED=>", e);
             this.onDestroy();
         }
     }
@@ -175,9 +175,9 @@ public class V2rayVPNService extends VpnService implements V2rayServicesListener
                     LocalSocket clientLocalSocket = new LocalSocket();
                     clientLocalSocket.connect(new LocalSocketAddress(localSocksFile, LocalSocketAddress.Namespace.FILESYSTEM));
                     if (!clientLocalSocket.isConnected()) {
-                        Log.e("SOCK_FILE", "Unable to connect to localSocksFile [" + localSocksFile + "]");
+                        Log.d("SOCK_FILE", "Unable to connect to localSocksFile [" + localSocksFile + "]");
                     } else {
-                        Log.e("SOCK_FILE", "connected to sock file [" + localSocksFile + "]");
+                        Log.d("SOCK_FILE", "connected to sock file [" + localSocksFile + "]");
                     }
                     OutputStream clientOutStream = clientLocalSocket.getOutputStream();
                     clientLocalSocket.setFileDescriptorsForSend(new FileDescriptor[]{tunFd});
@@ -187,7 +187,7 @@ public class V2rayVPNService extends VpnService implements V2rayServicesListener
                     clientLocalSocket.close();
                     break;
                 } catch (Exception e) {
-                    Log.e(V2rayVPNService.class.getSimpleName(), "sendFd failed =>", e);
+                    Log.d(V2rayVPNService.class.getSimpleName(), "sendFd failed =>", e);
                     if (tries > 5) break;
                     tries += 1;
                 }

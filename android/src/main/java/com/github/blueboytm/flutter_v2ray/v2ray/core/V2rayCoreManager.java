@@ -107,9 +107,9 @@ public final class V2rayCoreManager {
             downloadSpeed = 0;
             totalDownload = 0;
             totalUpload = 0;
-            Log.e(V2rayCoreManager.class.getSimpleName(), "setUpListener => new initialize from " + v2rayServicesListener.getService().getClass().getSimpleName());
+            Log.d(V2rayCoreManager.class.getSimpleName(), "setUpListener => new initialize from " + v2rayServicesListener.getService().getClass().getSimpleName());
         } catch (Exception e) {
-            Log.e(V2rayCoreManager.class.getSimpleName(), "setUpListener failed => ", e);
+            Log.d(V2rayCoreManager.class.getSimpleName(), "setUpListener failed => ", e);
             isLibV2rayCoreInitialized = false;
         }
     }
@@ -118,7 +118,7 @@ public final class V2rayCoreManager {
         @Override
         public long shutdown() {
             if (v2rayServicesListener == null) {
-                Log.e(V2rayCoreManager.class.getSimpleName(), "shutdown failed => can`t find initial service.");
+                Log.d(V2rayCoreManager.class.getSimpleName(), "shutdown failed => can`t find initial service.");
                 return -1;
             }
             try {
@@ -126,7 +126,7 @@ public final class V2rayCoreManager {
                 v2rayServicesListener = null;
                 return 0;
             } catch (Exception e) {
-                Log.e(V2rayCoreManager.class.getSimpleName(), "shutdown failed =>", e);
+                Log.d(V2rayCoreManager.class.getSimpleName(), "shutdown failed =>", e);
                 return -1;
             }
         }
@@ -154,7 +154,7 @@ public final class V2rayCoreManager {
                 try {
                     v2rayServicesListener.startService();
                 } catch (Exception e) {
-                    Log.e(V2rayCoreManager.class.getSimpleName(), "setup failed => ", e);
+                    Log.d(V2rayCoreManager.class.getSimpleName(), "setup failed => ", e);
                     return -1;
                 }
             }
@@ -168,7 +168,7 @@ public final class V2rayCoreManager {
                 v2rayConfig.ENABLE_TRAFFIC_STATICS);
         V2RAY_STATE = AppConfigs.V2RAY_STATES.V2RAY_CONNECTING;
         if (!isLibV2rayCoreInitialized) {
-            Log.e(V2rayCoreManager.class.getSimpleName(), "startCore failed => LibV2rayCore should be initialize before start.");
+            Log.d(V2rayCoreManager.class.getSimpleName(), "startCore failed => LibV2rayCore should be initialize before start.");
             return false;
         }
         if (isV2rayCoreRunning()) {
@@ -178,7 +178,7 @@ public final class V2rayCoreManager {
             Libv2ray.testConfig(v2rayConfig.V2RAY_FULL_JSON_CONFIG);
         } catch (Exception e) {
             sendDisconnectedBroadCast();
-            Log.e(V2rayCoreManager.class.getSimpleName(), "startCore failed => v2ray json config not valid.");
+            Log.d(V2rayCoreManager.class.getSimpleName(), "startCore failed => v2ray json config not valid.");
             return false;
         }
         try {
@@ -190,7 +190,7 @@ public final class V2rayCoreManager {
                 showNotification(v2rayConfig);
             }
         } catch (Exception e) {
-            Log.e(V2rayCoreManager.class.getSimpleName(), "startCore failed =>", e);
+            Log.d(V2rayCoreManager.class.getSimpleName(), "startCore failed =>", e);
             return false;
         }
         return true;
@@ -201,13 +201,13 @@ public final class V2rayCoreManager {
             if (isV2rayCoreRunning()) {
                 v2RayPoint.stopLoop();
                 v2rayServicesListener.stopService();
-                Log.e(V2rayCoreManager.class.getSimpleName(), "stopCore success => v2ray core stopped.");
+                Log.d(V2rayCoreManager.class.getSimpleName(), "stopCore success => v2ray core stopped.");
             } else {
-                Log.e(V2rayCoreManager.class.getSimpleName(), "stopCore failed => v2ray core not running.");
+                Log.d(V2rayCoreManager.class.getSimpleName(), "stopCore failed => v2ray core not running.");
             }
             sendDisconnectedBroadCast();
         } catch (Exception e) {
-            Log.e(V2rayCoreManager.class.getSimpleName(), "stopCore failed =>", e);
+            Log.d(V2rayCoreManager.class.getSimpleName(), "stopCore failed =>", e);
         }
     }
 
@@ -326,11 +326,11 @@ public final class V2rayCoreManager {
                 config_json.put("routing", new_routing_json);
                 return Libv2ray.measureOutboundDelay(config_json.toString());
             } catch (Exception json_error) {
-                Log.e("getV2rayServerDelay", json_error.toString());
+                Log.d("getV2rayServerDelay", json_error.toString());
                 return Libv2ray.measureOutboundDelay(config);
             }
         } catch (Exception e) {
-            Log.e("getV2rayServerDelayCore", e.toString());
+            Log.d("getV2rayServerDelayCore", e.toString());
             return -1L;
         }
     }
