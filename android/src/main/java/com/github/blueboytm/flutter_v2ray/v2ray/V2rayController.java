@@ -1,22 +1,21 @@
 package com.github.blueboytm.flutter_v2ray.v2ray;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
-import android.util.Log;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import java.util.ArrayList;
 
 import com.github.blueboytm.flutter_v2ray.v2ray.core.V2rayCoreManager;
 import com.github.blueboytm.flutter_v2ray.v2ray.services.V2rayProxyOnlyService;
 import com.github.blueboytm.flutter_v2ray.v2ray.services.V2rayVPNService;
 import com.github.blueboytm.flutter_v2ray.v2ray.utils.AppConfigs;
 import com.github.blueboytm.flutter_v2ray.v2ray.utils.Utilities;
+
+import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import libv2ray.Libv2ray;
 
 public class V2rayController {
@@ -25,12 +24,21 @@ public class V2rayController {
         Utilities.copyAssets(context);
         AppConfigs.APPLICATION_ICON = app_icon;
         AppConfigs.APPLICATION_NAME = app_name;
-        context.registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context arg0, Intent arg1) {
-                AppConfigs.V2RAY_STATE = (AppConfigs.V2RAY_STATES) arg1.getExtras().getSerializable("STATE");
-            }
-        }, new IntentFilter("V2RAY_CONNECTION_INFO"));
+        if (Build.VERSION.SDK_INT >= 34) {
+            context.registerReceiver(new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context arg0, Intent arg1) {
+                    AppConfigs.V2RAY_STATE = (AppConfigs.V2RAY_STATES) arg1.getExtras().getSerializable("STATE");
+                }
+            }, new IntentFilter("V2RAY_CONNECTION_INFO"), Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            context.registerReceiver(new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context arg0, Intent arg1) {
+                    AppConfigs.V2RAY_STATE = (AppConfigs.V2RAY_STATES) arg1.getExtras().getSerializable("STATE");
+                }
+            }, new IntentFilter("V2RAY_CONNECTION_INFO"));
+        }
     }
 
     public static void changeConnectionMode(final AppConfigs.V2RAY_CONNECTION_MODES connection_mode) {
@@ -76,8 +84,8 @@ public class V2rayController {
     }
 
     public static long getConnectedV2rayServerDelay(Context context) {
-        if(V2rayController.getConnectionState() != AppConfigs.V2RAY_STATES.V2RAY_CONNECTED){
-             return  -1;
+        if (V2rayController.getConnectionState() != AppConfigs.V2RAY_STATES.V2RAY_CONNECTED) {
+            return -1;
         }
         Intent check_delay;
         if (AppConfigs.V2RAY_CONNECTION_MODE == AppConfigs.V2RAY_CONNECTION_MODES.PROXY_ONLY) {
@@ -102,7 +110,11 @@ public class V2rayController {
             }
         };
 
-        context.registerReceiver(receiver, new IntentFilter("CONNECTED_V2RAY_SERVER_DELAY"));
+        if (Build.VERSION.SDK_INT >= 34) {
+            context.registerReceiver(receiver, new IntentFilter("CONNECTED_V2RAY_SERVER_DELAY"),Context.RECEIVER_NOT_EXPORTED);
+        }else{
+            context.registerReceiver(receiver, new IntentFilter("CONNECTED_V2RAY_SERVER_DELAY"));
+        }
         try {
             boolean received = latch.await(3000, TimeUnit.MILLISECONDS);
             if (!received) {
@@ -126,7 +138,7 @@ public class V2rayController {
         return AppConfigs.V2RAY_STATE;
     }
 
-    public static String getCoreVersion(){
+    public static String getCoreVersion() {
         return Libv2ray.checkVersionX();
     }
 

@@ -1,14 +1,18 @@
 package com.github.blueboytm.flutter_v2ray;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.VpnService;
+import android.os.Build;
+
 import androidx.annotation.NonNull;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.app.Activity;
-import android.net.VpnService;
-import android.content.Intent;
-import android.content.BroadcastReceiver;
-import android.content.IntentFilter;
+import com.github.blueboytm.flutter_v2ray.v2ray.V2rayController;
+import com.github.blueboytm.flutter_v2ray.v2ray.utils.AppConfigs;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
@@ -19,9 +23,6 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
-
-import com.github.blueboytm.flutter_v2ray.v2ray.V2rayController;
-import com.github.blueboytm.flutter_v2ray.v2ray.utils.AppConfigs;
 
 /**
  * FlutterV2rayPlugin
@@ -40,7 +41,7 @@ public class FlutterV2rayPlugin implements FlutterPlugin, ActivityAware {
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
         vpnControlMethod = new MethodChannel(binding.getBinaryMessenger(), "flutter_v2ray");
         vpnStatusEvent = new EventChannel(binding.getBinaryMessenger(), "flutter_v2ray/status");
-        
+
         vpnStatusEvent.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink events) {
@@ -55,10 +56,10 @@ public class FlutterV2rayPlugin implements FlutterPlugin, ActivityAware {
         vpnControlMethod.setMethodCallHandler((call, result) -> {
             switch (call.method) {
                 case "startV2Ray":
-                    if (Boolean.TRUE.equals(call.argument("proxy_only"))){
+                    if (Boolean.TRUE.equals(call.argument("proxy_only"))) {
                         V2rayController.changeConnectionMode(AppConfigs.V2RAY_CONNECTION_MODES.PROXY_ONLY);
-                    } 
-                    V2rayController.StartV2ray(binding.getApplicationContext(), call.argument("remark"),  call.argument("config"), call.argument("blocked_apps"), call.argument("bypass_subnets"));
+                    }
+                    V2rayController.StartV2ray(binding.getApplicationContext(), call.argument("remark"), call.argument("config"), call.argument("blocked_apps"), call.argument("bypass_subnets"));
                     result.success(null);
                     break;
                 case "stopV2Ray":
@@ -128,11 +129,15 @@ public class FlutterV2rayPlugin implements FlutterPlugin, ActivityAware {
                     list.add(intent.getExtras().getString("DOWNLOAD_TRAFFIC"));
                     list.add(intent.getExtras().getSerializable("STATE").toString().substring(6));
                     vpnStatusSink.success(list);
+                } catch (Exception ignored) {
                 }
-                catch(Exception ignored) {}
             }
         };
-        activity.registerReceiver(v2rayBroadCastReceiver, new IntentFilter("V2RAY_CONNECTION_INFO"));
+        if (Build.VERSION.SDK_INT >= 34) {
+            activity.registerReceiver(v2rayBroadCastReceiver, new IntentFilter("V2RAY_CONNECTION_INFO"), Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            activity.registerReceiver(v2rayBroadCastReceiver, new IntentFilter("V2RAY_CONNECTION_INFO"));
+        }
     }
 
     @Override
@@ -146,7 +151,7 @@ public class FlutterV2rayPlugin implements FlutterPlugin, ActivityAware {
         v2rayBroadCastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-               try {
+                try {
                     ArrayList<String> list = new ArrayList<>();
                     list.add(intent.getExtras().getString("DURATION"));
                     list.add(intent.getExtras().getString("UPLOAD_SPEED"));
@@ -155,11 +160,16 @@ public class FlutterV2rayPlugin implements FlutterPlugin, ActivityAware {
                     list.add(intent.getExtras().getString("DOWNLOAD_TRAFFIC"));
                     list.add(intent.getExtras().getSerializable("STATE").toString().substring(6));
                     vpnStatusSink.success(list);
+                } catch (Exception ignored) {
                 }
-                catch(Exception ignored) {}
             }
         };
-        activity.registerReceiver(v2rayBroadCastReceiver, new IntentFilter("V2RAY_CONNECTION_INFO"));
+        if (Build.VERSION.SDK_INT >= 34) {
+            activity.registerReceiver(v2rayBroadCastReceiver, new IntentFilter("V2RAY_CONNECTION_INFO"), Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            activity.registerReceiver(v2rayBroadCastReceiver, new IntentFilter("V2RAY_CONNECTION_INFO"));
+
+        }
     }
 
     @Override
