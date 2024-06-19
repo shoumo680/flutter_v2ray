@@ -12,6 +12,8 @@ abstract class V2RayURL {
   String get address => '';
   String get remark => '';
 
+  int delay = -2;
+
   Map<String, dynamic> inbound = {
     "tag": "in_proxy",
     "port": 10808,
